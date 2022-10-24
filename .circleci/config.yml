@@ -49,7 +49,7 @@ jobs:
       - setup
       - run: npm run test
       - store_test_results:
-          path: ~/reports/mocha
+          path: reports/mocha
       - store_artifacts:
           path: coverage
 
