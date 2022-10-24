@@ -45,9 +45,10 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - run: echo "export BUILD_VERSION=$(npm pkg get version | tr -d '\"')" >> .env
+      - run: mkdir -p tmp
+      - run: echo "export BUILD_VERSION=$(npm pkg get version | tr -d '\"')" >> tmp/.env
       - persist_to_workspace:
-          root: './'
+          root: 'tmp'
           path: '.env'
 
   lint:
