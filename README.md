@@ -1,22 +1,54 @@
 # CookieToMap
 
-TODO: Describe the library.
+A lightweight JS library to convert cookie strings to a JS Map.
+
+## Why was this library created?
+
+I needed something that could parse the some cookie strings retrieved directly from an HTTP Response (the Set-Cookie value), and I couldn't find any library that could make that happen. And since necessity is the mother of invention, this library was created! 😁
 
 ## Installation
 
-TODO: Update this after publishing and describe the installation steps.
+`npm install cookie-to-map`
 
 ## Usage
 
-TODO: Write usage instructions here. Also generate documentation for API.
+Requiring the library:
+
+```js
+const CookieToMap = require('cookie-to-map');
+```
+
+Using the library:
+
+```js
+CookieToMap.parseCookieString('some=cookie_string; being_parsed=here;'); // => { 'some': 'cookie_string', 'being_parsed': 'here' }
+```
+
+##### Do note that using this library won't preserve the cookie [attributes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#attributes). This library only retrieves the key value pairs.
+
+##### Example:
+```js
+CookieToMap.parseCookieString('some=cookie_string; Max-Age=36500'); // => { 'some': 'cookie_string' }
+```
+
+##### P.S : This library also tries to handle some comma-delimitted cookies, but that scenario wasn't that well tested. If you have some cases where the things are breaking, feel free to submit those cookie strings as an issue (and also a PR for that issue if you can 😜).
 
 ## Development
 
-TODO: Add steps for development of the application. (Do this after adding tests).
+Wanna help me develop this library? Awesome :smile:
+Here are the steps to get started:
+1. Checkout a new branch with `develop` as the base.
+2. Modify the code as needed.
+3. Add / modify the test-cases. Also make sure that the code coverage is **atleast** 95% per file, else the checks won't pass.
+5. Submit it as a PR after linking the issue! 😄
 
 ## Contributing
 
 Bug reports and pull requests are welcome on [GitHub](https://github.com/shettytejas/cookie-to-map). This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/shettytejas/cookie-to-map/blob/master/CODE_OF_CONDUCT.md).
+
+Contribution in the following ways are accepted:
+1. Raising Issues and Enhancement Requests (use the applicable labels).
+2. Raising PRs for the pre-existing issues and enhancement requests.
 
 ## License
 
