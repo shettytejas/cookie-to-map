@@ -100,14 +100,9 @@ workflows:
       - publish:
           post-steps:
             - failure_handler
-          requires:
-            - test
-      - git_release:
-          post-steps:
-            - failure_handler
             - success_handler
           requires:
-            - publish
+            - test
   pr-workflow:
     unless:
       equal: [<< pipeline.git.branch >>, 'master']
