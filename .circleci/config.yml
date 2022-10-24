@@ -100,12 +100,11 @@ workflows:
           post-steps:
             - failure_handler
           requires:
-            - set_env
+            - lint
       - publish:
           post-steps:
             - failure_handler
           requires:
-            - lint
             - test
       - git_release:
           post-steps:
