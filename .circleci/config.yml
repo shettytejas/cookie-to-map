@@ -1,26 +1,116 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
-jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+orbs:
+  discord: antonioned/discord@0.1.0
+  node: circleci/node@5.0.3
+
+commands:
+  setup:
+    description: 'Set of common setup steps.'
     steps:
       - checkout
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+      - node/install-packages
 
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+  get_env:
+    description: 'Getting the environment variables loaded into the shell when needed.'
+    steps:
+      - attach_workspace:
+          at: '.'
+      - run: cat .env >> $BASH_ENV
+
+  failure_handler:
+    steps:
+      - discord/status:
+          fail_only: true
+          failure_message: ':skull_crossbones: Bruh! The CI workflow for the branch **$CIRCLE_BRANCH** failed. Get the branch fixed before deployment!'
+
+  success_handler:
+    steps:
+      - get_env
+      - discord/status:
+          success_only: true
+          success_message: ':rocket: Hurray! The CI workflow for the branch **$CIRCLE_BRANCH** is a success! Version ${BUILD_VERSION} is up!'
+
+defaults: &defaults
+  docker:
+    - image: cimg/node:18.1.0
+
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - setup
+
+  set_env:
+    <<: *defaults
+    steps:
+      - checkout
+      - run: mkdir -p tmp
+      - run: echo "export BUILD_VERSION=$(npm pkg get version | tr -d '\"')" >> tmp/.env
+      - persist_to_workspace:
+          root: tmp
+          paths: 
+            - .env
+
+  lint:
+    <<: *defaults
+    steps:
+      - setup
+      - run: npm run lint
+
+  test:
+    <<: *defaults
+    steps:
+      - setup
+      - run: npm run test
+      - store_test_results:
+          path: reports/mocha
+      - store_artifacts:
+          path: coverage
+
+  publish:
+    <<: *defaults
+    steps:
+      - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+      - run: npm publish
+
 workflows:
-  say-hello-workflow:
+  master-workflow:
+    when:
+      equal: [<< pipeline.git.branch >>, 'master']
     jobs:
-      - say-hello
+      - build:
+          post-steps:
+            - failure_handler
+      - set_env:
+          post-steps:
+            - failure_handler
+          requires:
+            - build
+      - lint:
+          post-steps:
+            - failure_handler
+          requires:
+            - set_env
+      - test:
+          post-steps:
+            - failure_handler
+          requires:
+            - lint
+      - publish:
+          post-steps:
+            - failure_handler
+            - success_handler
+          requires:
+            - test
+  pr-workflow:
+    unless:
+      equal: [<< pipeline.git.branch >>, 'master']
+    jobs:
+      - build
+      - lint:
+          requires:
+            - build
+      - test:
+          requires:
+            - build

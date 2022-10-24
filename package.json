@@ -4,7 +4,7 @@
   "description": "A lightweight JS library to convert cookie strings to map.",
   "main": "index.js",
   "scripts": {
-    "test": "nyc --reporter=html --check-coverage --lines 90 --per-file mocha spec/**/*.js",
+    "test": "nyc --reporter=html --check-coverage --lines 90 --per-file mocha spec/**/*.js --recursive --timeout=10000 --exit --reporter mocha-junit-reporter --reporter-options mochaFile=reports/mocha/test-results.xml",
     "lint": "eslint '**/*.js' --ignore-pattern node_modules/"
   },
   "keywords": [
@@ -27,6 +27,7 @@
     "eslint": "^8.25.0",
     "eslint-config-google": "^0.14.0",
     "mocha": "^10.1.0",
+    "mocha-junit-reporter": "^2.1.0",
     "nyc": "^15.1.0"
   }
 }
