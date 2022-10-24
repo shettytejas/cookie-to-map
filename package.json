@@ -1,6 +1,6 @@
 {
   "name": "cookie-to-map",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "A lightweight JS library to convert cookie strings to map.",
   "main": "index.js",
   "scripts": {
