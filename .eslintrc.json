@@ -1,0 +1,21 @@
+{
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": "google",
+  "overrides": [
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+  "rules": {
+    "max-len": ["error", 140],
+    "indent": ["error", 2],
+    "object-curly-spacing": ["error", "always"],
+    "quotes": "off",
+    "prefer-const": "error"
+  }
+}

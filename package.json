@@ -1,0 +1,32 @@
+{
+  "name": "cookie-to-map",
+  "version": "0.6.0",
+  "description": "A lightweight JS library to convert cookie strings to map.",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc --reporter=html --check-coverage --lines 90 --per-file mocha spec/**/*.js",
+    "lint": "eslint '**/*.js' --ignore-pattern node_modules/"
+  },
+  "keywords": [
+    "cookie-strings",
+    "cookie",
+    "cookie-helper",
+    "cookie-parser",
+    "cookies",
+    "request",
+    "header",
+    "parse",
+    "map",
+    "object",
+    "key-value"
+  ],
+  "author": "Tejas Shetty",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "eslint": "^8.25.0",
+    "eslint-config-google": "^0.14.0",
+    "mocha": "^10.1.0",
+    "nyc": "^15.1.0"
+  }
+}
