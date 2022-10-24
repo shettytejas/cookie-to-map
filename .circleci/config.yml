@@ -34,7 +34,7 @@ jobs:
       - checkout
       - run: echo "export BUILD_VERSION=$(npm pkg get version | tr -d '\"')" >> .env
       - persist_to_workspace:
-          root: '.'
+          root: './'
           path: '.env'
 
   lint:
@@ -73,17 +73,35 @@ workflows:
     unless:
       equal: [<< pipeline.git.branch >>, 'master']
     jobs:
-      - build
-      - set_env
-      - lint
-      - test
-      - publish
-      - git_release
-      - alert
+      - build:
+      - set_env:
+          requires:
+            - build
+      - lint:
+          requires:
+            - set_env
+      - test:
+          requires:
+            - set_env
+      - publish:
+          requires:
+            - lint
+            - test
+      - git_release:
+          requires:
+            - publish
+      - alert:
+          requires:
+            - git_release
   pr-workflow:
     unless:
       equal: [<< pipeline.git.branch >>, 'master']
     jobs:
       - build
-      - lint
-      - test
+      - lint:
+          requires:
+            - build
+      - test:
+          requires:
+            - build
+      - alert
