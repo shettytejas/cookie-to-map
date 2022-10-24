@@ -13,7 +13,7 @@ describe("CookieTuples's", () => {
     it('should return a CookieTuple object with key-value set as "undefined" to the given key and value (undefined given)', () => {
       const newTuple = new CookieTuple(undefined, undefined);
 
-      expect(newTuple.key).to.be.eql('undefine');
+      expect(newTuple.key).to.be.eql('undefined');
       expect(newTuple.val).to.be.eql('undefined');
     });
   });
