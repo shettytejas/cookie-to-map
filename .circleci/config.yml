@@ -18,6 +18,19 @@ commands:
           at: '.'
       - run: cat .env >> $BASH_ENV
 
+  failure_handler:
+    steps:
+      - discord/status:
+          fail_only: true
+          failure_message: ':skull_crossbones: Bruh! The CI workflow for the branch **$CIRCLE_BRANCH** failed. Get the branch fixed before deployment!'
+
+  success_handler:
+    steps:
+      - get_env
+      - discord/status:
+          success_only: true
+          success_message: ':rocket: Hurray! The CI workflow for the branch **$CIRCLE_BRANCH** is a success! Version ${BUILD_VERSION} is up!'
+
 defaults: &defaults
   docker:
     - image: cimg/node:18.1.0
@@ -63,43 +76,40 @@ jobs:
     steps:
       - run: echo 'TODO'
 
-  alert:
-    <<: *defaults
-    steps:
-      - discord/status:
-          success_message: ':rocket: Hurray! The CI workflow for the branch **$CIRCLE_BRANCH** is a success! New Version is up!'
-          failure_message: ':skull_crossbones: Bruh! The CI workflow for the branch **$CIRCLE_BRANCH** failed. Version deployment is halted!'
-
 workflows:
   master-workflow:
     unless:
       equal: [<< pipeline.git.branch >>, 'master']
     jobs:
-      - build
+      - build:
+          post-steps:
+            - failure_handler
       - set_env:
+          post-steps:
+            - failure_handler
           requires:
             - build
       - lint:
+          post-steps:
+            - failure_handler
           requires:
             - set_env
       - test:
-          requires:
-            - set_env
-      - publish:
+          post-steps:
+            - failure_handler
           requires:
             - lint
+      - publish:
+          post-steps:
+            - failure_handler
+          requires:
             - test
       - git_release:
+          post-steps:
+            - failure_handler
+            - success_handler
           requires:
             - publish
-      - alert:
-          requires:
-            - build
-            - set_env
-            - lint
-            - test
-            - publish
-            - git_release
   pr-workflow:
     unless:
       equal: [<< pipeline.git.branch >>, 'master']
