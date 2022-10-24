@@ -56,7 +56,7 @@ jobs:
   publish:
     <<: *defaults
     steps:
-      - run: echo 'TODO'
+      - run: echo 'TODO!'
 
   git_release:
     <<: *defaults
