@@ -48,8 +48,8 @@ jobs:
       - run: mkdir -p tmp
       - run: echo "export BUILD_VERSION=$(npm pkg get version | tr -d '\"')" >> tmp/.env
       - persist_to_workspace:
-          root: 'tmp'
-          path: '.env'
+          root: tmp
+          path: .env
 
   lint:
     <<: *defaults
