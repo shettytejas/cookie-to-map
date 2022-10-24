@@ -94,6 +94,11 @@ workflows:
             - publish
       - alert:
           requires:
+            - build
+            - set_env
+            - lint
+            - test
+            - publish
             - git_release
   pr-workflow:
     unless:
