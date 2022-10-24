@@ -71,16 +71,12 @@ jobs:
   publish:
     <<: *defaults
     steps:
-      - run: echo 'TODO!'
-
-  git_release:
-    <<: *defaults
-    steps:
-      - run: echo 'TODO'
+      - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+      - run: npm publish
 
 workflows:
   master-workflow:
-    unless:
+    when:
       equal: [<< pipeline.git.branch >>, 'master']
     jobs:
       - build:
